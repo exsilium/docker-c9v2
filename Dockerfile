@@ -38,7 +38,7 @@ RUN cd /home/app/cloud9 && git checkout -B $C9_BRANCH origin/$C9_BRANCH && expor
 # Build insturctions - Ungit
 RUN git clone https://github.com/FredrikNoren/ungit.git /home/app/ungit
 RUN cd /home/app/ungit && npm install -g grunt-cli && npm install && grunt
-RUN printf '{ "users": {"\$C9_USERNAME": "\$C9_PASSWORD" }}' | tee /home/app/.ungitrc
+RUN printf '{ "users": { "test": "test" }}' | tee /home/app/.ungitrc
 
 USER root
 
