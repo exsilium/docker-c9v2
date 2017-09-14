@@ -2,7 +2,6 @@
 FROM phusion/baseimage:latest
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV C9_BRANCH master
 
 # Bring in the latest and greatest
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold"
@@ -33,7 +32,6 @@ RUN npm -v
 # Build instructions - Cloud9
 RUN mkdir /home/app/workspace
 RUN git clone https://github.com/exsilium/cloud9.git /home/app/cloud9
-RUN cd /home/app/cloud9 && git checkout -B $C9_BRANCH origin/$C9_BRANCH && export CXX=g++-4.9 && npm install && npm install pm2
 
 # Build insturctions - Ungit
 RUN git clone https://github.com/FredrikNoren/ungit.git /home/app/ungit
@@ -54,6 +52,10 @@ ADD cloud9.conf /etc/nginx/sites-enabled/cloud9.conf
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# c9v2 version setup
+ENV C9_CHECKOUT "-B master origin/master"
+RUN cd /home/app/cloud9 && git checkout $C9_CHECKOUT && export CXX=g++-4.9 && npm install && npm install pm2
 
 # Environment variables used during runtime
 ENV C9_USERNAME test
