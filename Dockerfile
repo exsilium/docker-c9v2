@@ -37,7 +37,7 @@ RUN ln -s /home/app/cloud9-extra/cloud9-plugin-ungit /home/app/cloud9/plugins-cl
 
 # Build insturctions - Ungit
 RUN git clone https://github.com/exsilium/mungit.git /home/app/mungit
-RUN cd /home/app/mungit && npm install -g grunt-cli && npm install && grunt
+RUN cd /home/app/mungit && git checkout tags/v1.2.0 && npm install -g grunt-cli && npm install && grunt
 RUN printf '{ "users": { "test": "test" }}' | tee /home/app/.ungitrc
 
 USER root
@@ -56,7 +56,7 @@ ADD cloud9.conf /etc/nginx/sites-enabled/cloud9.conf
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # c9v2 version setup
-ENV C9_CHECKOUT "-B master origin/master"
+ENV C9_CHECKOUT "tags/v2.1.6"
 RUN cd /home/app/cloud9 && git checkout $C9_CHECKOUT && export CXX=g++-4.9 && npm install && npm install pm2
 
 # Environment variables used during runtime
