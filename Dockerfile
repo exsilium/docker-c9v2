@@ -14,10 +14,10 @@ USER app
 
 # Installing Node via NVM
 ENV NVM_DIR /home/app/.nvm
-ENV NODE_VERSION v6.11.3
+ENV NODE_VERSION v6.11.4
 
 # Install nvm with node and npm
-RUN cd /home/app && curl https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh | bash \
+RUN cd /home/app && curl https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
@@ -30,21 +30,23 @@ RUN node --version
 RUN npm -v
 
 # Build instructions - Cloud9
-RUN mkdir /home/app/workspace
+RUN mkdir /home/app/workspace && mkdir /home/app/cloud9-extra
 RUN git clone https://github.com/exsilium/cloud9.git /home/app/cloud9
+RUN git clone https://github.com/exsilium/cloud9-plugin-ungit.git /home/app/cloud9-extra/cloud9-plugin-ungit
+RUN ln -s /home/app/cloud9-extra/cloud9-plugin-ungit /home/app/cloud9/plugins-client/ext.ungit
 
 # Build insturctions - Ungit
-RUN git clone https://github.com/FredrikNoren/ungit.git /home/app/ungit
-RUN cd /home/app/ungit && npm install -g grunt-cli && npm install && grunt
+RUN git clone https://github.com/exsilium/mungit.git /home/app/mungit
+RUN cd /home/app/mungit && npm install -g grunt-cli && npm install && grunt
 RUN printf '{ "users": { "test": "test" }}' | tee /home/app/.ungitrc
 
 USER root
 
-RUN mkdir /etc/service/cloud9 && mkdir /etc/service/ungit && mkdir /etc/service/nginx
+RUN mkdir /etc/service/cloud9 && mkdir /etc/service/mungit && mkdir /etc/service/nginx
 RUN printf "#!/bin/sh\nexec /usr/sbin/nginx -g 'daemon off;'" | tee /etc/service/nginx/run
 RUN printf "#!/bin/sh\ncd /home/app/cloud9\nexec /sbin/setuser app ./node_modules/pm2/bin/pm2 start --no-daemon ecosystem.json" | tee /etc/service/cloud9/run
-RUN printf "#!/bin/sh\ncd /home/app/ungit\nexec /sbin/setuser app ./bin/ungit --port 8080 --urlBase \$C9_URLBASE --rootPath ungit --no-launchBrowser --authentication" | tee /etc/service/ungit/run
-RUN chmod 500 /etc/service/cloud9/run /etc/service/ungit/run /etc/service/nginx/run
+RUN printf "#!/bin/sh\ncd /home/app/mungit\nexec /sbin/setuser app ./bin/ungit --port 8080 --urlBase \$C9_URLBASE --rootPath ungit --no-launchBrowser --authentication" | tee /etc/service/mungit/run
+RUN chmod 500 /etc/service/cloud9/run /etc/service/mungit/run /etc/service/nginx/run
 
 # App setup
 RUN rm /etc/nginx/sites-enabled/default
