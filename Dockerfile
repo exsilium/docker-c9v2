@@ -55,9 +55,13 @@ ADD cloud9.conf /etc/nginx/sites-enabled/cloud9.conf
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+USER app
+
 # c9v2 version setup
 ENV C9_CHECKOUT "tags/v2.1.6"
-RUN cd /home/app/cloud9 && git checkout $C9_CHECKOUT && export CXX=g++-4.9 && npm install && npm install pm2 && make worker
+RUN cd /home/app/cloud9 && git checkout $C9_CHECKOUT && export CXX=g++-4.9 && npm install && npm install pm2
+
+USER root
 
 # Environment variables used during runtime
 ENV C9_USERNAME test
