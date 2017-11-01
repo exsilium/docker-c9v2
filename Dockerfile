@@ -14,7 +14,7 @@ USER app
 
 # Installing Node via NVM
 ENV NVM_DIR /home/app/.nvm
-ENV NODE_VERSION v6.11.4
+ENV NODE_VERSION v6.11.5
 
 # Install nvm with node and npm
 RUN cd /home/app && curl https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash \
@@ -57,7 +57,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # c9v2 version setup
 ENV C9_CHECKOUT "tags/v2.1.6"
-RUN cd /home/app/cloud9 && git checkout $C9_CHECKOUT && export CXX=g++-4.9 && npm install && npm install pm2
+RUN cd /home/app/cloud9 && git checkout $C9_CHECKOUT && export CXX=g++-4.9 && npm install && npm install pm2 && make worker
 
 # Environment variables used during runtime
 ENV C9_USERNAME test
