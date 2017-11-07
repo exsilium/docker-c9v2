@@ -29,10 +29,11 @@ ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
 RUN node --version
 RUN npm -v
 
-# Build instructions - Cloud9
+# Build instructions - Cloud9 Extras
 RUN mkdir /home/app/workspace && mkdir /home/app/cloud9-extra
 RUN git clone https://github.com/exsilium/cloud9.git /home/app/cloud9
 RUN git clone https://github.com/exsilium/cloud9-plugin-ungit.git /home/app/cloud9-extra/cloud9-plugin-ungit
+RUN cd /home/app/cloud9-extra/cloud9-plugin-ungit && git checkout tags/v0.0.1 && cd
 RUN ln -s /home/app/cloud9-extra/cloud9-plugin-ungit /home/app/cloud9/plugins-client/ext.ungit
 
 # Build insturctions - Ungit
