@@ -39,14 +39,13 @@ RUN ln -s /home/app/cloud9-extra/cloud9-plugin-ungit /home/app/cloud9/plugins-cl
 # Build insturctions - Ungit
 RUN git clone https://github.com/exsilium/mungit.git /home/app/mungit
 RUN cd /home/app/mungit && git checkout tags/v1.2.0 && npm install -g grunt-cli && npm install && grunt
-RUN printf '{ "users": { "test": "test" }}' | tee /home/app/.ungitrc
 
 USER root
 
 RUN mkdir /etc/service/cloud9 && mkdir /etc/service/mungit && mkdir /etc/service/nginx
 RUN printf "#!/bin/sh\nexec /usr/sbin/nginx -g 'daemon off;'" | tee /etc/service/nginx/run
 RUN printf "#!/bin/sh\ncd /home/app/cloud9\nexec /sbin/setuser app ./node_modules/pm2/bin/pm2 start --no-daemon ecosystem.json" | tee /etc/service/cloud9/run
-RUN printf "#!/bin/sh\ncd /home/app/mungit\nexec /sbin/setuser app ./bin/ungit --port 8080 --urlBase \$C9_URLBASE --rootPath ungit --no-launchBrowser --authentication" | tee /etc/service/mungit/run
+RUN printf "#!/bin/sh\ncd /home/app/mungit\nexec /sbin/setuser app ./bin/ungit --port 8080 --urlBase \$C9_URLBASE --rootPath ungit --no-launchBrowser --authentication --users.\$C9_USERNAME \$C9_PASSWORD" | tee /etc/service/mungit/run
 RUN chmod 500 /etc/service/cloud9/run /etc/service/mungit/run /etc/service/nginx/run
 
 # App setup
